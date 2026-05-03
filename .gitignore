@@ -1,0 +1,41 @@
+# Terraform
+.terraform.lock.hcl
+**/.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate*
+terraform.tfstate.backup
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Python
+**/__pycache__/
+*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.venv/
+**/venv/
+**/.python_packages/
+
+# Node / frontend build output
+**/node_modules/
+**/dist/
+**/build/
+**/.vite/
+
+# Local packages and archives
+release.zip
+*.log
+.claude
+
