@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: consumer
+    static_configs:
+      - targets: ["consumer:8001"]
+
+  - job_name: dlq_handler
+    static_configs:
+      - targets: ["dlq_handler:8002"]

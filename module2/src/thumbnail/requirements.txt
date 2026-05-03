@@ -1,0 +1,7 @@
+# VM + Container App
+fastapi
+uvicorn[standard]
+Pillow
+
+# Azure Functions only
+azure-functions

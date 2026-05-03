@@ -1,0 +1,11 @@
+# Terraform state — never commit these
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+tfplan
+
+# Local variable overrides — may contain secrets
+*.tfvars.local
+override.tf
+override.tf.json

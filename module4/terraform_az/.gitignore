@@ -1,0 +1,7 @@
+terraform.tfvars
+.terraform/
+*.tfstate
+*.tfstate.backup
+# Optionally commit .terraform.lock.hcl for reproducible provider versions.
+# Uncomment the next line to exclude it instead:
+# .terraform.lock.hcl

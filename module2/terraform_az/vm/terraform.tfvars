@@ -1,0 +1,5 @@
+resource_group_name = "rg-thumbnail-dev"
+location            = "westeurope"
+subnet_vm_id        = "/subscriptions/<CHANGE_ME>/resourceGroups/rg-thumbnail-dev/providers/Microsoft.Network/virtualNetworks/vnet-thumbnail/subnets/subnet-vm"
+admin_username      = "azureuser"
+ssh_public_key      = "ssh-rsa <CHANGE_ME>"

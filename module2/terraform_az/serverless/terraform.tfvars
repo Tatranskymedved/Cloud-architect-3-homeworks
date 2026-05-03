@@ -1,0 +1,6 @@
+resource_group_name = "rg-thumbnail-dev"
+location            = "westeurope"
+function_app_name    = "func-thumbnail-a73ec644"
+storage_account_name = "<CHANGE_ME>"
+storage_account_id   = "/subscriptions/<CHANGE_ME>/resourceGroups/rg-thumbnail-dev/providers/Microsoft.Storage/storageAccounts/<CHANGE_ME>"
+managed_identity_id  = "/subscriptions/<CHANGE_ME>/resourceGroups/rg-thumbnail-dev/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id-thumbnail"

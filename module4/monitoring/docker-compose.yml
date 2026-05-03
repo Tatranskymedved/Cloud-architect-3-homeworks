@@ -1,0 +1,53 @@
+services:
+  producer:
+    build:
+      context: ../src/producer
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - SERVICE_BUS_CONNECTION_STRING=${SERVICE_BUS_PRODUCER_CONNECTION_STRING}
+      - SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME}
+    restart: unless-stopped
+
+  consumer:
+    build:
+      context: ../src/consumer
+    ports:
+      - "8001:8001"
+    env_file: .env
+    environment:
+      - SERVICE_BUS_CONNECTION_STRING=${SERVICE_BUS_CONSUMER_CONNECTION_STRING}
+      - SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME}
+    restart: unless-stopped
+
+  dlq_handler:
+    build:
+      context: ../src/dlq_handler
+    ports:
+      - "8002:8002"
+    env_file: .env
+    environment:
+      - SERVICE_BUS_CONNECTION_STRING=${SERVICE_BUS_CONSUMER_CONNECTION_STRING}
+      - SERVICE_BUS_QUEUE_NAME=${SERVICE_BUS_QUEUE_NAME}
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.2
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    restart: unless-stopped

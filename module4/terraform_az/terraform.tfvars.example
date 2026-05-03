@@ -1,0 +1,11 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# Do NOT commit terraform.tfvars — it is excluded by .gitignore.
+#
+# The Service Bus namespace name is built as: <prefix>-sb-<environment>
+# It must be globally unique across all Azure subscriptions (DNS hostname).
+# If apply fails with a name conflict, change prefix to something unique
+# (e.g. your initials + "orders": "juorders").
+
+location    = "westeurope"
+prefix      = "orderpipeline"   # change to avoid name collisions
+environment = "dev"
