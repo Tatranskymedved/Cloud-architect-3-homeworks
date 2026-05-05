@@ -1,0 +1,7 @@
+terraform.tfvars
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+tfplan
+.pg_password_backup

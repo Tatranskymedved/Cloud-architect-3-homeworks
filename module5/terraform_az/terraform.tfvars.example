@@ -1,0 +1,28 @@
+# Copy this file to terraform.tfvars and fill in the values.
+# terraform.tfvars is gitignored — never commit it.
+
+# ── Location ───────────────────────────────────────────────────────────────────
+# PostgreSQL Flexible Server quota varies by subscription.
+# If "LocationIsOfferRestricted" is reported for westeurope, switch to
+# northeurope or germanywestcentral.
+location            = "northeurope"
+
+prefix              = "catalog"         # Change if name collisions occur (storage account must be globally unique)
+resource_group_name = "rg-module5-catalog"
+pg_admin_username   = "pgadmin"
+pg_db_name          = "catalog"
+
+# ── Password (dev/test only) ───────────────────────────────────────────────────
+# Hardcoded for convenience — do NOT use this in any real deployment.
+pg_admin_password = "PostgreSQL@Module5"
+
+# ── Your laptop IP (for PostgreSQL firewall) ───────────────────────────────────
+# PostgreSQL uses public access mode restricted to your IP only.
+# Get your current IP:
+#   (Invoke-RestMethod https://ifconfig.me/ip).Trim()
+#
+# If your IP changes (different network, VPN on/off) and connections start
+# failing, update this value and run:
+#   terraform apply -target=module.postgres
+# (updates only the firewall rules, ~10 seconds)
+my_ip = "1.2.3.4"   # ← replace with your actual IP
