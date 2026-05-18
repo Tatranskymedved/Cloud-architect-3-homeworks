@@ -1,0 +1,7 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored — never commit it.
+
+location            = "westeurope"
+prefix              = "retail"
+resource_group_name = "rg-module6-data"
+# storage_suffix    = ""   # leave empty to use a random 6-character suffix

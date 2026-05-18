@@ -47,3 +47,11 @@ Types of data storages and performance aspects + redundancy and distribution of 
 
 - [Definition](module5/module5_persistent_layer.md)
 - [Azure implementation](module5/module5_persistent_layer_azure.md)
+
+
+## [Modul 6: Data processing](module6/)
+
+Distributed data processing and data analysis + machine learning
+
+- [Definition](module6/module6_data_processing.md)
+- [Azure implementation](module6/module6_data_processing_azure.md)

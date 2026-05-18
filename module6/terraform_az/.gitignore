@@ -1,0 +1,12 @@
+*.tfvars
+!*.tfvars.example
+*.tfstate
+*.tfstate.backup
+.terraform/
+tfplan
+*.log
+cluster.json
+conda_env.yml
+train_job.yml
+deployment.yml
+request.json
