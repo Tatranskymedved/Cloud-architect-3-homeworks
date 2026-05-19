@@ -1,0 +1,7 @@
+# .trivyignore — suppress known-acceptable CVEs in the base image.
+# Add CVE IDs here if Trivy reports CRITICAL findings against python:3.12-slim.
+# Format:
+#   CVE-YYYY-XXXXX  # brief justification
+#
+# Example:
+#   CVE-2024-12345  # false positive in libexpat — code path not reachable in this app

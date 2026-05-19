@@ -1,0 +1,12 @@
+# terraform.tfvars.example — copy to terraform.tfvars and fill in your values.
+# terraform.tfvars is gitignored; this file is committed.
+
+prefix              = "quoteapi"          # change if ACR/Key Vault name conflicts occur (globally unique)
+location            = "westeurope"
+resource_group_name = "rg-module7-quoteapi"
+alert_email         = "you@example.com"   # receives Azure Monitor alert notifications
+owner_tag           = "yourusername"       # your student username
+
+# Set this after the first terraform apply (once the image has been pushed to ACR):
+#   container_image = "quoteapiacr123456.azurecr.io/quote-api:latest"
+container_image     = ""

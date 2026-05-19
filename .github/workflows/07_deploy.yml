@@ -1,0 +1,138 @@
+name: 07 Deploy
+
+on:
+  workflow_run:
+    workflows: ["07 App Build"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform-test:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Log in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform test
+        working-directory: homeworks/module7/terraform_az/modules/container_instance
+        env:
+          ARM_USE_OIDC: "true"
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        run: |
+          terraform init -backend=false
+          terraform test
+
+  staging:
+    needs: terraform-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Log in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Terraform init
+        working-directory: homeworks/module7/terraform_az
+        run: terraform init
+
+      - name: Terraform apply — staging
+        working-directory: homeworks/module7/terraform_az
+        env:
+          ARM_USE_OIDC: "true"
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+          TF_VAR_owner_tag: ${{ vars.OWNER_TAG }}
+          TF_VAR_container_image: "${{ vars.ACR_NAME }}.azurecr.io/quote-api:latest"
+        run: |
+          terraform apply -target=module.quote_api_staging -auto-approve
+          echo "STAGING_FQDN=$(terraform output -raw staging_fqdn)" >> $GITHUB_ENV
+
+      - name: Upload Terraform state
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfstate
+          path: homeworks/module7/terraform_az/terraform.tfstate
+
+      - name: Health check — staging
+        run: |
+          for i in {1..10}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "http://${{ env.STAGING_FQDN }}:8000/healthz")
+            if [ "$status" = "200" ]; then
+              echo "Staging health check passed (HTTP 200)"
+              exit 0
+            fi
+            echo "Attempt $i: HTTP $status — waiting 15 seconds..."
+            sleep 15
+          done
+          echo "Staging health check failed after 10 attempts"
+          exit 1
+
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Log in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Download Terraform state
+        uses: actions/download-artifact@v4
+        with:
+          name: tfstate
+          path: homeworks/module7/terraform_az/
+
+      - name: Terraform init
+        working-directory: homeworks/module7/terraform_az
+        run: terraform init
+
+      - name: Terraform apply — production
+        working-directory: homeworks/module7/terraform_az
+        env:
+          ARM_USE_OIDC: "true"
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+          TF_VAR_owner_tag: ${{ vars.OWNER_TAG }}
+          TF_VAR_container_image: "${{ vars.ACR_NAME }}.azurecr.io/quote-api:latest"
+        run: terraform apply -auto-approve

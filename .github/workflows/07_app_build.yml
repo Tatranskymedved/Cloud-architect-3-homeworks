@@ -1,0 +1,58 @@
+name: 07 App Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "homeworks/module7/src/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: homeworks/module7/src/quote_api
+        run: pip install -r requirements.txt
+
+      - name: Run pytest
+        working-directory: homeworks/module7/src/quote_api
+        run: pytest tests/ -v
+
+      - name: Build Docker image
+        working-directory: homeworks/module7/src/quote_api
+        run: docker build -t quote-api .
+
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "quote-api"
+          exit-code: "1"
+          severity: "CRITICAL"
+          trivyignores: "homeworks/module7/src/quote_api/.trivyignore"
+
+      - name: Log in to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Push image to ACR
+        run: |
+          ACR_NAME="${{ vars.ACR_NAME }}"
+          ACR_SERVER="${ACR_NAME}.azurecr.io"
+          az acr login --name "$ACR_NAME"
+          docker tag quote-api "${ACR_SERVER}/quote-api:latest"
+          docker push "${ACR_SERVER}/quote-api:latest"

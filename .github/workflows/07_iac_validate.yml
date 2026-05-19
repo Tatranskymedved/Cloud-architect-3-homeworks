@@ -1,0 +1,41 @@
+name: 07 IaC Validate
+
+on:
+  pull_request:
+    paths:
+      - "homeworks/module7/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Terraform init (needed for fmt check to resolve modules)
+        working-directory: homeworks/module7/terraform_az
+        run: terraform init -backend=false
+
+      - name: Terraform fmt check
+        working-directory: homeworks/module7/terraform_az
+        run: terraform fmt --check --recursive
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+
+      - name: TFLint
+        working-directory: homeworks/module7/terraform_az
+        run: |
+          tflint --init
+          tflint --chdir .
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: homeworks/module7/terraform_az
+          framework: terraform
+          soft_fail: false

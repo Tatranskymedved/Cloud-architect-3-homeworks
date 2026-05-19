@@ -1,0 +1,14 @@
+[
+  {"id": 1, "text": "The best way to predict the future is to invent it.", "author": "Alan Kay"},
+  {"id": 2, "text": "Simplicity is the soul of efficiency.", "author": "Austin Freeman"},
+  {"id": 3, "text": "Make it work, make it right, make it fast.", "author": "Kent Beck"},
+  {"id": 4, "text": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", "author": "Martin Fowler"},
+  {"id": 5, "text": "First, solve the problem. Then, write the code.", "author": "John Johnson"},
+  {"id": 6, "text": "In order to be irreplaceable, one must always be different.", "author": "Coco Chanel"},
+  {"id": 7, "text": "The most dangerous phrase in the language is: we've always done it this way.", "author": "Grace Hopper"},
+  {"id": 8, "text": "Talk is cheap. Show me the code.", "author": "Linus Torvalds"},
+  {"id": 9, "text": "Programs must be written for people to read, and only incidentally for machines to execute.", "author": "Harold Abelson"},
+  {"id": 10, "text": "The function of good software is to make the complex appear simple.", "author": "Grady Booch"},
+  {"id": 11, "text": "Measuring programming progress by lines of code is like measuring aircraft building progress by weight.", "author": "Bill Gates"},
+  {"id": 12, "text": "Walking on water and developing software from a specification are easy if both are frozen.", "author": "Edward Berard"}
+]
